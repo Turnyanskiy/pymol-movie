@@ -13,9 +13,12 @@ def main() -> None:
 
     print(yaml_dict)
 
+    movie_maker = movie.MovieMaker()
+
     for scene in yaml_dict["scenes"]:
-        movie.setup_scene(scene, object_loader)
-    movie.produce_movie(yaml_dict["setup"])
+        movie_maker.setup_scene(scene, object_loader)
+
+    movie_maker.produce_movie(yaml_dict["setup"])
 
 
 if __name__ == "__main__":

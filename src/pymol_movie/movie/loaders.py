@@ -25,12 +25,12 @@ class ObjectLoader:
 
     Attributes:
         _files: Sorted iterable of trajectory pdb files.
-        _current_state: The previous loaded trajectory state.
+        loaded_states: The previous loaded trajectory state.
         name: Name of loaded object.
     """
 
     def __init__(self, directory: str, name: str):
-        """Initialize the instance based and globs pdb trajectory files from directory.
+        """Initialize the instance and globs pdb trajectory files from directory.
 
         Args:
             directory: Filepath to directory containing pdb trajectory files.
@@ -40,7 +40,7 @@ class ObjectLoader:
             Path(directory).glob("*.pdb"),
             key=lambda x: int(os.path.splitext(x)[0].split("_")[-1]),
         )
-        self._current_state = 0
+        self.loaded_states = 0
         self.name = name
 
     def load_states(self, states):
@@ -50,5 +50,5 @@ class ObjectLoader:
             states: The number of states to load.
         """
         for i in range(states):
-            self._current_state += 1
-            cmd.load(self._files[self._current_state], self.name)
+            self.loaded_states += 1
+            cmd.load(self._files[self.loaded_states], self.name)
