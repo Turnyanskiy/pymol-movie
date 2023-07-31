@@ -5,9 +5,10 @@ from pymol import cmd
 from .loaders import ObjectLoader
 
 from typing import Any
+from typing import Dict
 
 
-def produce_movie(setup_dict: dict[str, Any]) -> None:
+def produce_movie(setup_dict: Dict[str, Any]) -> None:
     """Produce PyMol movie.
 
     Check for valid dict values. If not valid set default. Saves the movie.
@@ -61,7 +62,7 @@ def produce_movie(setup_dict: dict[str, Any]) -> None:
     # cmd.movie.produce(f'{filename}.mpg', mode, 1, 200, 0, 'convert', quality=quality, width=width, height=height)
 
 
-def setup_scene(scene_dict: dict[str, Any], object_loader: ObjectLoader) -> None:
+def setup_scene(scene_dict: Dict[str, Any], object_loader: ObjectLoader) -> None:
     """Set PyMol movie scene.
 
     Create new scene and add needed frames. Perform actions.
@@ -86,6 +87,7 @@ def setup_scene(scene_dict: dict[str, Any], object_loader: ObjectLoader) -> None
         state=cmd.count_states(),
         object=f"{object_loader.name}",
     )
+
     for action in scene_dict["actions"]:
         choice = list(action.keys())[0]
         details = list(action.values())[0]
