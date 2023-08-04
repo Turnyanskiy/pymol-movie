@@ -14,7 +14,6 @@ def main() -> None:
     print(yaml_dict)
 
     movie_maker = movie.MovieMaker()
-
     for scene in yaml_dict["scenes"]:
         movie_maker.setup_scene(scene, object_loader)
 
