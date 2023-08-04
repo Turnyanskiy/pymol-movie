@@ -1,61 +1,61 @@
 setup:
-  filename: test
+  filename: example
   mode: normal
-  #width: 1264
-  #height: 720
+  width: 1920
+  height: 1080
   framerate: 30
-  quality: 80
+  quality: 100
+  frames: 250
+  produce: pse
 scenes:
   - scene: 1
     representation: cartoon
-    frames: 100
-    frames_per_state: 2
+    frame: 1
+    state: 1
     actions:
-      - move:
-          frame: 10
-          axis: x
-          distance: 10
-      - zoom:
-          frame: 1
-          selection: "all"
-          time: 0
-      - zoom:
-          frame: 40
-          selection: "chain C"
-          time: 1
-      - zoom:
-          frame: 80
-          selection: "chain A"
-          time: 2
-      - roll:
-          frame: 20
-          end: 35
-          loop: 0 #Loop doesnt work
-          axis: x
-      #- set_view: # Unreliable
-      #    frame: 90
-      #    view_matrix: (100.999876618,   -0.000452542,   -0.015699286, 0.000446742,    0.999999821,   -0.000372844, 0.015699454,    0.000365782,    0.999876678, 0.000000000,    0.000000000, -150.258514404, 11.842411041,   20.648729324,    8.775371552, 118.464958191,  182.052062988,    0.000000000 )
-  - scene: 2
-    representation: cartoon
-    frames: 50
-    frames_per_state: 1
-    actions:
-      - rock:
-          frame: 20
-          end: 35
-          angle: 30
-          phase: 0
-          loop: 0
+      - rotate:
           axis: y
+          angle: 90
+  - scene: 2
+    representation: sticks
+    frame: 51
+    state: 101
+    actions:
+      - orient:
+          selection: Chain A
   - scene: 3
     representation: cartoon
-    frames: 50
-    frames_per_state: 1
+    frame: 101
+    state: 50
     actions:
-      - rock:
-          frame: 10
-          end: 50
-          angle: 30
-          phase: 0
-          loop: 0
+      - rotate:
+          axis: y
+          angle: 90
+      - move:
           axis: x
+          magnitude: 50
+      - color:
+          selection: all
+          color: red
+  - scene: 4
+    representation: sticks
+    frame: 151
+    state: 20
+    actions:
+      - rotate:
+          axis: x
+          angle: 180
+      - move:
+          axis: x
+          magnitude: -10
+  - scene: 5
+    representation: cartoon
+    frame: 200
+    state: 100
+    actions:
+      - zoom:
+          selection: all
+  - scene: 6
+    representation: cartoon
+    frame: 250
+    state: 1

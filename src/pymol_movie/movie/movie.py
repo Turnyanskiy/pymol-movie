@@ -16,7 +16,7 @@ class MovieMaker:
 
     def __init__(self):
         """Initialize the instance."""
-        self._loaded_scenes = 0
+        self._loaded_scenes = []
         self._loaded_frames = 0
 
     @staticmethod
@@ -33,9 +33,9 @@ class MovieMaker:
         ):
             print(
                 'setup: filename has either not been specified or is not a string. A default filename of \
-    "pymol_movie.pse" will be used.'
+    "pymol_movie" will be used.'
             )
-            setup_dict["filename"] = "pymol_movie.pse"
+            setup_dict["filename"] = "pymol_movie"
 
         if not (mode := setup_dict.get("mode")) or mode not in (
             "normal",
@@ -62,7 +62,7 @@ class MovieMaker:
 
         if not setup_dict.get("framerate"):
             print(
-                "setup: frame rate has either not been specified or... A default framerate of 30 will be used."
+                "setup: frame rate has either not been specified or... A default frame rate of 30 will be used."
             )
             setup_dict["framerate"] = 30
 
@@ -76,6 +76,8 @@ class MovieMaker:
     50 will be used."
             )
             setup_dict["quality"] = 50
+        if not setup_dict.get("produce"):
+            setup_dict["produce"] = "pse"
 
     def produce_movie(self, setup_dict: Dict[str, Any]) -> None:
         """Save PyMol movie.
@@ -85,15 +87,28 @@ class MovieMaker:
         """
         self._clean_setup_dict(setup_dict)
 
-        cmd.set("movie_fps", setup_dict["framerate"])
-        cmd.set("scene_loop")
-        cmd.mdo(1, "scene auto, next")
-        cmd.rewind()
-        cmd.save(f'{setup_dict["filename"]}.pse')
+        cmd.mset(f'1x{setup_dict["frames"]}')
 
-        # cmd.movie.produce(f'{filename}.mpg', mode, 1, 200, 0, 'convert', quality=quality, width=width, height=height)
+        cmd.set("movie_loop", 0)
 
-    def setup_scene(self, scene_dict: Dict[str, Any], object_loader: ObjectLoader):
+        for (scene, frame, state) in self._loaded_scenes:
+            cmd.mview("store", frame, scene=scene, state=state)
+
+        if setup_dict["produce"] == "mpg":
+            cmd.movie.produce(
+                f'{setup_dict["filename"]}.mpg',
+                preserve=0,
+                encoder="ffmpeg",
+                quality=setup_dict["quality"],
+                width=setup_dict["width"],
+                height=setup_dict["height"],
+            )
+        else:
+            cmd.save(f'{setup_dict["filename"]}.pse')
+
+    def setup_scene(
+        self, scene_dict: Dict[str, Any], object_loader: ObjectLoader
+    ) -> None:
         """Set PyMol movie scene.
 
         Create new scene and add needed frames. Perform actions.
@@ -102,38 +117,19 @@ class MovieMaker:
             scene_dict: Nested dictionary containing scene information.
             object_loader: ObjectLoader object for the object in scene.
         """
-        # scene_dict = clean_scene_dict(scene_dict)
+        object_loader.load_up_to_state(scene_dict["state"])
 
-        cmd.scene(key=f"{self._loaded_scenes + 1}", action="store")
-        cmd.madd(f'1x{scene_dict["frames"]}')
+        cmd.scene(key=str(scene_dict["scene"]), action="store")
+        cmd.show_as(scene_dict["representation"], "all")
 
-        scene_total_states = scene_dict["frames"] // scene_dict["frames_per_state"]
+        if action_dict := scene_dict.get("actions"):
+            self._setup_actions(action_dict)
 
-        cmd.mview(
-            "store",
-            first=self._loaded_frames + 1,
-            state=object_loader.loaded_states,
-            object=f"{object_loader.name}",
-        )
-        object_loader.load_states(scene_total_states)
-        cmd.mview(
-            "store",
-            scene_dict["frames"] // 2,
-            state=cmd.count_states(),
-            object=f"{object_loader.name}",
+        self._loaded_scenes.append(
+            (str(scene_dict["scene"]), scene_dict["frame"], scene_dict["state"])
         )
 
-        self._setup_actions(scene_dict["actions"])
-
-        cmd.mdo(
-            self._loaded_frames,
-            f"mdo {self._loaded_frames + 1}: scene {self._loaded_scenes + 1}",
-        )
-
-        self._loaded_frames += scene_dict["frames"]
-        self._loaded_scenes += 1
-
-    def _setup_actions(self, action_dicts: List[dict]):
+    def _setup_actions(self, action_dicts: List[dict]) -> None:
         """Set actions for movie scene.
 
         Args:
@@ -143,36 +139,15 @@ class MovieMaker:
             choice = list(action.keys())[0]
             details = list(action.values())[0]
 
-            if choice == "move":
-                cmd.mdo(
-                    self._loaded_frames + details["frame"],
-                    f'move {details["axis"]}, {details["distance"]}',
-                )
+            # Camera actions
+            if choice == "rotate":
+                cmd.turn(details["axis"], details["angle"])
+            elif choice == "move":
+                cmd.move(details["axis"], details["magnitude"])
             elif choice == "zoom":
-                cmd.mdo(
-                    self._loaded_frames + details.get("frame"),
-                    f'zoom {details["selection"]}, animate={details["time"]}',
-                )
-            elif choice == "set_view":
-                cmd.mdo(
-                    self._loaded_frames + details["frame"],
-                    f'set_view {details["view_matrix"]}',
-                )
-            # elif choice == 'pause':
-            #    cmd.madd(f'{details.get("state")}x{details.get("frames")}')
-            elif choice == "roll":
-                cmd.movie.roll(
-                    self._loaded_frames + details["frame"],
-                    details["end"],
-                    details["loop"],
-                    details["axis"],
-                )
-            elif choice == "rock":
-                cmd.movie.rock(
-                    self._loaded_frames + details["frame"],
-                    details["end"],
-                    details["angle"],
-                    details["phase"],
-                    details["loop"],
-                    details["axis"],
-                )
+                cmd.zoom(details["selection"], animate=-1)
+            elif choice == "orient":
+                cmd.orient(details["selection"])
+
+            elif choice == "color":
+                cmd.color(details["color"], details["selection"])

@@ -29,7 +29,7 @@ class ObjectLoader:
         name: Name of loaded object.
     """
 
-    def __init__(self, directory: str, name: str):
+    def __init__(self, directory: str, name: str) -> None:
         """Initialize the instance and globs pdb trajectory files from directory.
 
         Args:
@@ -43,12 +43,26 @@ class ObjectLoader:
         self.loaded_states = 0
         self.name = name
 
-    def load_states(self, states):
+    def load_states(self, states: int) -> None:
         """Load number of states specified.
 
         Args:
             states: The number of states to load.
         """
-        for i in range(states):
+        for _ in range(states):
+            self.loaded_states += 1
+            cmd.load(self._files[self.loaded_states], self.name)
+
+    def load_up_to_state(self, state: int) -> None:
+        """Load up to the state specified.
+
+        Load up to the state specified. If state specified is lower than the state already loaded then function
+        is ignored.
+
+        Args:
+            state: The state to load to. (Inclusive)
+        """
+        states_to_load = max(0, state - self.loaded_states)
+        for _ in range(states_to_load):
             self.loaded_states += 1
             cmd.load(self._files[self.loaded_states], self.name)
