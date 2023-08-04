@@ -1,4 +1,12 @@
 setup:
+  objects:
+    - name: luke
+      directory: ./example_trajectories/simple_translate
+      states: 200
+    - name: isaac
+      directory: ./example_trajectories/translate_rotate
+      states: 190
+produce:
   filename: example
   mode: normal
   width: 1920
@@ -9,53 +17,135 @@ setup:
   produce: pse
 scenes:
   - scene: 1
-    representation: cartoon
     frame: 1
-    state: 1
-    actions:
-      - rotate:
+    objects:
+      - name: luke
+        state: 1
+        actions:
+          - representation:
+              selection: chain B
+              representation: cartoon
+          - color:
+              selection: chain A
+              color: red
+      - name: isaac
+        state: 1
+        actions:
+          - representation:
+              selection: all
+              representation: sticks
+    camera:
+      - turn:
           axis: y
           angle: 90
   - scene: 2
-    representation: sticks
     frame: 51
-    state: 101
-    actions:
+    objects:
+      - name: luke
+        state: 101
+        actions:
+          - representation:
+              selection: chain C
+              representation: sticks
+          - color:
+              selection: chain C
+              color: pink
+      - name: isaac
+        state: 150
+        actions:
+          - representation:
+              selection: all
+              representation: cartoon
+    camera:
       - orient:
           selection: Chain A
   - scene: 3
-    representation: cartoon
     frame: 101
-    state: 50
-    actions:
-      - rotate:
+    objects:
+      - name: luke
+        state: 50
+        actions:
+          - representation:
+              selection: all
+              representation: cartoon
+          - color:
+              selection: chain C
+              color: green
+      - name: isaac
+        state: 75
+        actions:
+          - representation:
+              selection: chain c
+              representation: sticks
+          - translate:
+              selection: chain A
+              vector: [0, 10, 0]
+    camera:
+      - turn:
           axis: y
           angle: 90
       - move:
           axis: x
           magnitude: 50
-      - color:
-          selection: all
-          color: red
   - scene: 4
-    representation: sticks
     frame: 151
-    state: 20
-    actions:
-      - rotate:
+    objects:
+      - name: luke
+        state: 20
+        actions:
+          - representation:
+              selection: chain A
+              representation: sticks
+          - rotate:
+              axis: x
+              angle: 90
+              selection: all
+      - name: isaac
+        state: 40
+        actions:
+          - representation:
+              selection: all
+              representation: cartoon
+          - color:
+              selection: all
+              color: yellow
+    camera:
+      - turn:
           axis: x
           angle: 180
       - move:
           axis: x
           magnitude: -10
   - scene: 5
-    representation: cartoon
     frame: 200
-    state: 100
-    actions:
+    objects:
+      - name: luke
+        state: 100
+        actions:
+          - representation:
+              selection: all
+              representation: cartoon
+      - name: isaac
+        state: 190
+        actions:
+          - representation:
+              selection: chain A
+              representation: sticks
+    camera:
       - zoom:
           selection: all
   - scene: 6
-    representation: cartoon
     frame: 250
-    state: 1
+    objects:
+      - name: luke
+        state: 1
+        actions:
+          - representation:
+              selection: all
+              representation: cartoon
+      - name: isaac
+        state: 1
+        actions:
+          - representation:
+              selection: all
+              representation: sticks

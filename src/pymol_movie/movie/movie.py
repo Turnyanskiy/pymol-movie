@@ -1,8 +1,6 @@
 """Functions for movie setup and production."""
 from pymol import cmd
 
-from .loaders import ObjectLoader
-
 from typing import Any, Dict, List
 
 
@@ -20,24 +18,24 @@ class MovieMaker:
         self._loaded_frames = 0
 
     @staticmethod
-    def _clean_setup_dict(setup_dict: Dict[str, Any]):
+    def _clean_produce_dict(produce_dict: Dict[str, Any]):
         """Clean a setup dictionary.
 
         Checks for valid dict values. If not valid sets a default.
 
         Args:
-            setup_dict: Nested dictionary containing setup information.
+            produce_dict: Nested dictionary containing setup information.
         """
-        if not (filename := setup_dict.get("filename")) or not isinstance(
+        if not (filename := produce_dict.get("filename")) or not isinstance(
             filename, str
         ):
             print(
                 'setup: filename has either not been specified or is not a string. A default filename of \
     "pymol_movie" will be used.'
             )
-            setup_dict["filename"] = "pymol_movie"
+            produce_dict["filename"] = "pymol_movie"
 
-        if not (mode := setup_dict.get("mode")) or mode not in (
+        if not (mode := produce_dict.get("mode")) or mode not in (
             "normal",
             "fast",
             "ray",
@@ -46,28 +44,28 @@ class MovieMaker:
                 'setup: mode has either not been specified or is not one of 3 possible strings: \
     ("normal", "fast", "ray"). The default mode "normal" will be used.'
             )
-            setup_dict["mode"] = "normal"
+            produce_dict["mode"] = "normal"
 
-        if not (width := setup_dict.get("width")) or not width > 0:
+        if not (width := produce_dict.get("width")) or not width > 0:
             print(
                 "setup; width has either not been specified or is not >0. A default width of 1264 will be used."
             )
-            setup_dict["width"] = 1264
+            produce_dict["width"] = 1264
 
-        if not (height := setup_dict.get("height")) or not height > 0:
+        if not (height := produce_dict.get("height")) or not height > 0:
             print(
                 "setup; height has either not been specified or is not >0. A default height of 720 will be used."
             )
-            setup_dict["height"] = 720
+            produce_dict["height"] = 720
 
-        if not setup_dict.get("framerate"):
+        if not produce_dict.get("framerate"):
             print(
                 "setup: frame rate has either not been specified or... A default frame rate of 30 will be used."
             )
-            setup_dict["framerate"] = 30
+            produce_dict["framerate"] = 30
 
         if (
-            not (quality := setup_dict.get("quality"))
+            not (quality := produce_dict.get("quality"))
             or not quality >= 0
             or not quality <= 100
         ):
@@ -75,72 +73,81 @@ class MovieMaker:
                 "setup: quality has either not been specified or is not within the bounds of 0-100. A default quality of \
     50 will be used."
             )
-            setup_dict["quality"] = 50
-        if not setup_dict.get("produce"):
-            setup_dict["produce"] = "pse"
+            produce_dict["quality"] = 50
+        if not produce_dict.get("produce"):
+            produce_dict["produce"] = "pse"
 
-    def produce_movie(self, setup_dict: Dict[str, Any]) -> None:
+    def produce_movie(self, produce_dict: Dict[str, Any]) -> None:
         """Save PyMol movie.
 
         Args:
-            setup_dict: Nested dictionary containing setup information.
+            produce_dict: Nested dictionary containing produce movie information.
         """
-        self._clean_setup_dict(setup_dict)
-
-        cmd.mset(f'1x{setup_dict["frames"]}')
+        cmd.mset(f'1x{produce_dict["frames"]}')
 
         cmd.set("movie_loop", 0)
 
-        for (scene, frame, state) in self._loaded_scenes:
-            cmd.mview("store", frame, scene=scene, state=state)
+        for (scene, frame, name, state) in self._loaded_scenes:
+            cmd.mview("store", frame, scene=scene, object=name, state=state)
 
-        if setup_dict["produce"] == "mpg":
+        if (produce := produce_dict.get("produce")) and produce == "mpg":
+            self._clean_produce_dict(produce_dict)
             cmd.movie.produce(
-                f'{setup_dict["filename"]}.mpg',
+                f'{produce_dict["filename"]}.mpg',
                 preserve=0,
                 encoder="ffmpeg",
-                quality=setup_dict["quality"],
-                width=setup_dict["width"],
-                height=setup_dict["height"],
+                quality=produce_dict["quality"],
+                width=produce_dict["width"],
+                height=produce_dict["height"],
             )
         else:
-            cmd.save(f'{setup_dict["filename"]}.pse')
+            cmd.save(f'{produce_dict["filename"]}.pse')
 
-    def setup_scene(
-        self, scene_dict: Dict[str, Any], object_loader: ObjectLoader
-    ) -> None:
+    def setup_scene(self, scene_dict: Dict[str, Any]) -> None:
         """Set PyMol movie scene.
 
-        Create new scene and add needed frames. Perform actions.
+        Create new scene. Setup camera and object actions.
 
         Args:
             scene_dict: Nested dictionary containing scene information.
-            object_loader: ObjectLoader object for the object in scene.
         """
-        object_loader.load_up_to_state(scene_dict["state"])
-
         cmd.scene(key=str(scene_dict["scene"]), action="store")
-        cmd.show_as(scene_dict["representation"], "all")
 
-        if action_dict := scene_dict.get("actions"):
-            self._setup_actions(action_dict)
+        # Setup objects
+        for object_dict in scene_dict["objects"]:
+
+            if actions := object_dict.get("actions"):
+                self._setup_model(object_dict["name"], actions)
+
+            self._loaded_scenes.append(
+                (
+                    str(scene_dict["scene"]),
+                    scene_dict["frame"],
+                    object_dict["name"],
+                    object_dict["state"],
+                )
+            )
+
+        # Setup camera
+        if camera_dict := scene_dict.get("camera"):
+            self._setup_camera(camera_dict)
 
         self._loaded_scenes.append(
-            (str(scene_dict["scene"]), scene_dict["frame"], scene_dict["state"])
+            (str(scene_dict["scene"]), scene_dict["frame"], "", 0)
         )
 
-    def _setup_actions(self, action_dicts: List[dict]) -> None:
-        """Set actions for movie scene.
+    def _setup_camera(self, camera_dicts: List[dict]) -> None:
+        """Set camera actions for movie scene.
 
         Args:
-            action_dicts: A list of dictionaries containing action information.
+            camera_dicts: A list of dictionaries containing camera action information.
         """
-        for action in action_dicts:
-            choice = list(action.keys())[0]
-            details = list(action.values())[0]
+        for camera_action in camera_dicts:
+            choice = list(camera_action.keys())[0]
+            details = list(camera_action.values())[0]
 
             # Camera actions
-            if choice == "rotate":
+            if choice == "turn":
                 cmd.turn(details["axis"], details["angle"])
             elif choice == "move":
                 cmd.move(details["axis"], details["magnitude"])
@@ -149,5 +156,28 @@ class MovieMaker:
             elif choice == "orient":
                 cmd.orient(details["selection"])
 
-            elif choice == "color":
-                cmd.color(details["color"], details["selection"])
+    def _setup_model(self, name: str, action_dicts: List[dict]) -> None:
+        """Set model actions for movie scene.
+
+        Args:
+            name: Name of the model to perform actions.
+            action_dicts: A list of dictionaries containing camera action information.
+        """
+        for action in action_dicts:
+            choice = list(action.keys())[0]
+            details = list(action.values())[0]
+
+            if choice == "color":
+                cmd.color(details["color"], f'{name} and {details["selection"]}')
+            elif choice == "representation":
+                cmd.show_as(
+                    details["representation"], f'{name} and {details["selection"]}'
+                )
+            elif choice == "rotate":
+                cmd.rotate(
+                    details["axis"],
+                    details["angle"],
+                    f'{name} and {details["selection"]}',
+                )
+            elif choice == "translate":
+                cmd.translate(details["vector"], f'{name} and {details["selection"]}')
