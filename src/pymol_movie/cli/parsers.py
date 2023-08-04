@@ -14,7 +14,7 @@ def parse_args() -> argparse.Namespace:
     """
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("directory")
+    # parser.add_argument("directory")
     parser.add_argument("yaml_filepath")
 
     return parser.parse_args()
