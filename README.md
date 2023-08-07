@@ -16,7 +16,9 @@ To create a movie a .yaml configuration file is used. The file describes the obj
 | `scenes`  | A list of scenes               |
 | `produce` | Movie production configuration |
 
-### Setup
+---
+
+### setup
 |           |                                |
 | --------- | ------------------------------ |
 | `objects` | A list of pymol objects        |
@@ -27,7 +29,7 @@ setup:
   objects:
   - ...
 ```
-#### Objects
+#### setup:objects
 |             |                                                                                                           |
 | ----------- | --------------------------------------------------------------------------------------------------------- |
 | `name`      | Pymol editor name for object. This name is also used to refer to this object in the .yaml configuration.  |
@@ -43,7 +45,9 @@ setup:
     states: 200 
 ```
 
-### Scenes
+---
+
+### scenes
 |           |                                                                                                                                      |
 | --------- | ------------------------------------------------------------------------------------------------------------------------------------ |
 | `scene`   | Scene name. (The example uses a number but this is not required. Scenes are loaded and linked in the order they appear in the .yaml) |
@@ -54,8 +58,98 @@ setup:
 
 A sample scene:
 ```
-
+scenes:
+  - scene: 1
+    frame: 1
+    objects:
+    -  ...
+    camera:
+    -  ...
 ```
+
+#### scenes:objects
+|             |                                                                                                           |
+| ----------- | --------------------------------------------------------------------------------------------------------- |
+| `name`      | Pymol editor name for object.                                                                             |
+| `states`    | State of object in this scene.                                                                            |
+| `actions`   | List of actions to perform on object in this scene                                                        |
+
+A sample object:
+```
+scenes:
+  - scene: 1
+    frame: 1
+    objects:
+    - name: isaac
+      state: 1
+      actions:
+      -  ... 
+    camera:
+    -  ...
+```
+
+#### scenes:objects:actions
+|                  |                                                                                                                             |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `translate`      | `selection` selection of the object, `vector`  vector to translate. Written in the form `[0,0,0]`                           |
+| `rotate`         | `selection` selection of the object, `axis`  axis to perform roration, `angle` rotation in degrees, maximum rotation of 180 |
+| `representation` | `selection` selection of the object, `representation` the representation                                                    |
+| `color`          | `selection` selection of the object, `color` the color                                                                      |
+
+A sample action:
+```
+scenes:
+  - scene: 1
+    frame: 1
+    objects:
+      - name: isaac
+        state: 1
+        actions:
+          - translate:
+              selection: chain A
+              vector: [1, 0, 0]
+          - rotate;
+              selection: chain C
+              axis: x
+              angle: 90
+          - representation:
+              selection: all
+              representation: cartoon
+          - color:
+              selection: all
+              color: red
+    camera:
+      - ...
+```
+
+### scenes:camera 
+|                |                                                                            |
+| ------------- | --------------------------------------------------------------------------- |
+| `move`        | `axis` axis to perform movement, `magnitude` float of magnitude of movement |
+| `turn`        | `axis` axis to perform rotation, `angle` rotation in degrees                |
+| `zoom`        | `selection` zoom selection                                                  |
+| `orient`      | `selection` orient selection                                                |
+scenes:
+  - scene: 1
+    frame: 1
+    objects:
+      - name: isaac
+        state: 1
+        actions:
+          - ...
+    camera:
+      - move:
+          axis: x
+          magnitude: 1
+      - turn:
+          axis: y
+          angle: 90
+      - zoom:
+          selection: isaac and chain A
+      - orient:
+          selection: all
+```
+
 
 
 
