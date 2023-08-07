@@ -129,6 +129,10 @@ scenes:
 | `turn`        | `axis` axis to perform rotation, `angle` rotation in degrees                |
 | `zoom`        | `selection` zoom selection                                                  |
 | `orient`      | `selection` orient selection                                                |
+
+
+A sample camera:
+```
 scenes:
   - scene: 1
     frame: 1
