@@ -167,6 +167,7 @@ class MovieMaker:
             choice = list(action.keys())[0]
             details = list(action.values())[0]
 
+            # Basic model actions
             if choice == "color":
                 cmd.color(details["color"], f'{name} and {details["selection"]}')
             elif choice == "representation":
@@ -181,3 +182,10 @@ class MovieMaker:
                 )
             elif choice == "translate":
                 cmd.translate(details["vector"], f'{name} and {details["selection"]}')
+
+            # Presets
+            elif choice == "surface_sticks":
+                cmd.hide(selection=f"{name}")
+                cmd.show("surface", f'{name} and {details["selection"]}')
+                cmd.show("sticks", f'{name} and {details["selection"]}')
+                cmd.set("transparency", 0.5, f'{name} and {details["selection"]}')
