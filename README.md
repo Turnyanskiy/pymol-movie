@@ -48,6 +48,9 @@ setup:
 ---
 
 ### scenes
+
+In PyMol scenes are used to store view, all object activity information, all atom-wise visibility, color, representations and the global frame index. PyMol will then automatically interpolate between those scenes that results in the desired smooth transitions. https://pymolwiki.org/index.php/Scene
+
 |           |                                                                                                                                      |
 |-----------|--------------------------------------------------------------------------------------------------------------------------------------|
 | `scene`   | Scene name. (The example uses a number but this is not required. Scenes are loaded and linked in the order they appear in the .yaml) |
@@ -89,12 +92,18 @@ scenes:
 ```
 
 #### scenes:objects:actions
-|                  |                                                                                                                             |
-|------------------|-----------------------------------------------------------------------------------------------------------------------------|
-| `translate`      | `selection` selection of the object, `vector`  vector to translate. Written in the form `[0,0,0]`                           |
-| `rotate`         | `selection` selection of the object, `axis`  axis to perform rotation, `angle` rotation in degrees, maximum rotation of 180 |
-| `representation` | `selection` selection of the object, `representation` the representation                                                    |
-| `color`          | `selection` selection of the object, `color` the color                                                                      |
+
+All objects in pymol are defined in the Cartesian coordinate system called the model space. Changing the coordinates in model space is only necessary when objects must be moved relative to each other.
+
+To add additional options to the ones defined below, only `MovieMaker._setup_model` method needs to be changed. This is done by adding a branch to the else statement with the required `choice` string and then using the pymol api to define the action(s) required. https://pymolwiki.org/index.php/Model_Space_and_Camera_Space
+
+|                  |                                                                                                                                                                                                                |
+|------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `translate`      | `selection` selection of the object, `vector`  vector to translate. Written in the form `[0,0,0]`. https://pymolwiki.org/index.php/Translate                                                                   |
+| `rotate`         | `selection` selection of the object, `axis`  axis to perform rotation, `angle` rotation in degrees, maximum rotation of 180. https://pymolwiki.org/index.php/Rotate                                            |
+| `representation` | `selection` selection of the object, `representation` the representation. https://pymolwiki.org/index.php/Show_as                                                                                              |
+| `color`          | `selection` selection of the object, `color` the color. https://pymolwiki.org/index.php/Color                                                                                                                  |
+| `surface_sticks` | `selection` selection of the object. This is a preset and is not in the standard pymol api. This action changes the representation of the object to be shown as both surface and sticks with an opacity of 0.5 |
 
 A sample action:
 ```yaml
@@ -118,17 +127,25 @@ scenes:
           - color:
               selection: all
               color: red
+          - surface_sticks:
+              selection: chain C
     camera:
       - ...
 ```
 
-### scenes:camera
-|          |                                                                             |
-|----------|-----------------------------------------------------------------------------|
-| `move`   | `axis` axis to perform movement, `magnitude` float of magnitude of movement |
-| `turn`   | `axis` axis to perform rotation, `angle` rotation in degrees                |
-| `zoom`   | `selection` zoom selection                                                  |
-| `orient` | `selection` orient selection                                                |
+#### scenes:camera
+
+The pymol camera uses camera space to define object movement relative to the camera. When the camera is initially loaded the model axes correspond to the physical directions of the screen: x and y are horizontal and vertical, z is perpendicular to the screen. When the camera is moved this is no longer true for the model space axis, however, remains true for camera space axis.
+
+
+To add additional options to the ones defined below, only `MovieMaker._setup_camera` method needs to be changed. This is done by adding a branch to the else statement with the required `choice` string and then using the pymol api to define the action(s) required. https://pymolwiki.org/index.php/Model_Space_and_Camera_Space
+
+|          |                                                                                                                   |
+|----------|-------------------------------------------------------------------------------------------------------------------|
+| `move`   | `axis` axis to perform movement, `magnitude` float of magnitude of movement. https://pymolwiki.org/index.php/Move |
+| `turn`   | `axis` axis to perform rotation, `angle` rotation in degrees. https://pymolwiki.org/index.php/Turn                |
+| `zoom`   | `selection` zoom selection. https://pymolwiki.org/index.php/Zoom                                                  |
+| `orient` | `selection` orient selection. https://pymolwiki.org/index.php/Orient                                              |
 A sample camera:
 ```yaml
 scenes:
