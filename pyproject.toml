@@ -1,0 +1,25 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pymol-movie"
+version = "0.0.1"
+authors = [
+  { name="Turnyanskiy"},
+]
+description = "A package for creating a pymol movie from .yaml files"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+  "pyyaml"
+]
+
+[tool.hatch.build.target.sdist.force-include]
+"src/cli.py" = "src/pymol_movie/main.py"
+
+[project.scripts]
+executive = "pymol_movie.cli:main"

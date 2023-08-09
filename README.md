@@ -2,8 +2,8 @@
 
 ## Usage
 ```commandline
-cd src
-python3 __main__.py [<path_to_yaml>]
+pip3 install .
+python3 -m pymol_movie [<path_to_yaml>]
 ```
 
 ## Creating Config .yaml

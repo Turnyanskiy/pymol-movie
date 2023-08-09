@@ -10,4 +10,5 @@ RUN apt-get install -y pymol
 RUN pip3 install pyyaml
 
 COPY . .
-ENTRYPOINT ["python3", "./src/__main__.py"]
+RUN pip install .
+ENTRYPOINT ["python3", "-m", "pymol_movie"]
