@@ -5,6 +5,11 @@
 pip3 install .
 python3 -m pymol_movie [<path_to_yaml>]
 ```
+or
+```commandline
+docker build -t [<tag>] .
+docker run [<tag>] [<path_to_yaml>]
+```
 
 ## Creating Config .yaml
 To create a movie a .yaml configuration file is used. The file describes the objects, produce settings and individual scenes of the pymol movie.
