@@ -1,21 +1,21 @@
 """PDB trajectory loader class/function."""
-from pymol import cmd
-from pathlib import Path
 import os
+from pathlib import Path
+
+from pymol import cmd
 
 
-def load_trajectory(directory) -> None:
+def load_trajectory(directory: str, name: str) -> None:
     """Load all pdb files in specified directory.
 
     Args:
         directory: String with filepath to directory
+        name: Name of loaded object.
     """
-    p = Path(directory)
-    files = sorted(
-        p.glob("*.pdb"), key=lambda x: int(os.path.splitext(x)[0].split("_")[-1])
-    )
+    path = Path(directory)
+    files = sorted(path.glob("*.pdb"), key=lambda x: int(os.path.splitext(x)[0].split("_")[-1]))
     for file in files:
-        cmd.load(file, "mov")
+        cmd.load(file, name)
 
     print(f"loaded {cmd.count_states()} files")
 
@@ -56,8 +56,8 @@ class ObjectLoader:
     def load_up_to_state(self, state: int) -> None:
         """Load up to the state specified.
 
-        Load up to the state specified. If state specified is lower than the state already loaded then function
-        is ignored.
+        Load up to the state specified. If state specified is lower than the state already loaded
+        then function is ignored.
 
         Args:
             state: The state to load to. (Inclusive)

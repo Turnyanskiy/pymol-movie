@@ -1,21 +1,94 @@
+default_language_version:
+  python: python3.8
+exclude: '^docs/.*\.py$'
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.3.0
+    rev: v4.4.0
     hooks:
+      - id: debug-statements
+      - id: check-ast
+      - id: check-case-conflict
+      - id: check-builtin-literals
+      - id: check-docstring-first
+      - id: check-merge-conflict
       - id: check-yaml
       - id: end-of-file-fixer
+      - id: mixed-line-ending
       - id: trailing-whitespace
+      - id: requirements-txt-fixer
+  - repo: https://github.com/timothycrosley/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        name: isort (python)
+        args:
+          - --profile black
   - repo: https://github.com/psf/black
-    rev: 22.10.0
+    rev: 23.3.0
     hooks:
       - id: black
+        name: black (python)
+        args:
+          - --line-length=100
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.4.1
+    rev: v1.3.0
     hooks:
       - id: mypy
-        verbose: true
-        additional_dependencies: ['types-PyYAML']
-  - repo: https://github.com/pycqa/pydocstyle.git
+        name: mypy (python)
+        args:
+          - --disallow-untyped-defs
+          - --check-untyped-defs
+          - --ignore-missing-imports
+        additional_dependencies: ["types-PyYAML"]
+  - repo: https://github.com/PyCQA/flake8
+    rev: 6.0.0
+    hooks:
+      - id: flake8
+        name: flake8 (python)
+        args:
+          - --max-line-length=100
+          - --max-cognitive-complexity=15
+          - --per-file-ignores=__init__.py:F401,F403
+        additional_dependencies:
+          - pep8-naming
+          - flake8-builtins
+          - flake8-comprehensions
+          - flake8-bugbear
+          - flake8-pytest-style
+          - flake8-cognitive-complexity
+  - repo: https://github.com/pycqa/pydocstyle
     rev: 6.3.0
     hooks:
       - id: pydocstyle
+        name: pydocstyle (python)
+        args:
+          - --convention=google
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.4.0
+    hooks:
+      - id: pyupgrade
+        name: pyupgrade (python)
+        args:
+          - --py36-plus
+          - --py37-plus
+          - --py38-plus
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v2.7.1
+    hooks:
+      - id: prettier
+        name: prettier (YAML, Markdown, JSON)
+        args:
+          - --print-width=100
+          - --prose-wrap=always
+          - --tab-width=2
+  - repo: local
+    hooks:
+      - id: pylint
+        name: pylint (python)
+        entry: pylint
+        language: system
+        types: [python]
+        args:
+          - "-rn"
+          - "-sn"
+          - --ignore-patterns=test_.*?py
