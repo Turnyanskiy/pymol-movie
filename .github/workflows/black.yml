@@ -1,9 +1,8 @@
 name: black-action
 on: [push, pull_request]
-permissions:
-  contents: write
 jobs:
   linter_name:
+    permissions: write-all
     name: runner / black
     runs-on: ubuntu-latest
     steps:
