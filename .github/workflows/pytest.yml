@@ -24,4 +24,5 @@ jobs:
           sudo apt-get install -y pymol
       - name: Test with pytest
         run: |
+          cd src
           pytest
