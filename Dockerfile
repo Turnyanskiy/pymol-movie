@@ -11,8 +11,5 @@ RUN pip3 install pyyaml pytest
 
 COPY . .
 
-RUN cd src
-RUN python3 -m pytest
-
 RUN pip install .
 ENTRYPOINT ["python3", "-m", "pymol_movie"]
