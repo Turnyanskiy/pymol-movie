@@ -26,7 +26,9 @@ class MovieMaker:
         Args:
             produce_dict: Nested dictionary containing setup information.
         """
-        if not (filename := produce_dict.get("filename")) or not isinstance(filename, str):
+        if not (filename := produce_dict.get("filename")) or not isinstance(
+            filename, str
+        ):
             print(
                 'setup: filename has either not been specified or is not a string. A default \
                 filename of "pymol_movie" will be used.'
@@ -65,7 +67,11 @@ class MovieMaker:
             )
             produce_dict["framerate"] = 30
 
-        if not (quality := produce_dict.get("quality")) or not quality >= 0 or not quality <= 100:
+        if (
+            not (quality := produce_dict.get("quality"))
+            or not quality >= 0
+            or not quality <= 100
+        ):
             print(
                 "setup: quality has either not been specified or is not within the bounds 0-100. \
                 A default quality of  50 will be used."
@@ -128,7 +134,9 @@ class MovieMaker:
         if camera_dict := scene_dict.get("camera"):
             self._setup_camera(camera_dict)
 
-        self._loaded_scenes.append((str(scene_dict["scene"]), scene_dict["frame"], "", 0))
+        self._loaded_scenes.append(
+            (str(scene_dict["scene"]), scene_dict["frame"], "", 0)
+        )
 
     def _setup_camera(self, camera_dicts: List[dict]) -> None:
         """Set camera actions for movie scene.
@@ -168,7 +176,9 @@ class MovieMaker:
             if choice == "color":
                 cmd.color(details["color"], f'{name} and {details["selection"]}')
             elif choice == "representation":
-                cmd.show_as(details["representation"], f'{name} and {details["selection"]}')
+                cmd.show_as(
+                    details["representation"], f'{name} and {details["selection"]}'
+                )
             elif choice == "rotate":
                 cmd.rotate(
                     details["axis"],
