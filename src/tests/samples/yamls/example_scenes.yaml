@@ -1,20 +1,3 @@
-setup:
-  objects:
-    - name: luke
-      directory: ./example_trajectories/simple_translate
-      states: 200
-    - name: isaac
-      directory: ./example_trajectories/translate_rotate
-      states: 190
-produce:
-  filename: example
-  mode: normal
-  width: 1920
-  height: 1080
-  framerate: 30
-  quality: 100
-  frames: 250
-  produce: pse
 scenes:
   - scene: 1
     frame: 1
@@ -136,6 +119,17 @@ scenes:
           selection: all
   - scene: 6
     frame: 250
+    objects:
+      - name: isaac
+        state: 100
+        actions:
+          - surface_sticks:
+              selection: chain C
+    camera:
+      - zoom:
+          selection: chain C
+  - scene: 7
+    frame: 300
     objects:
       - name: luke
         state: 1

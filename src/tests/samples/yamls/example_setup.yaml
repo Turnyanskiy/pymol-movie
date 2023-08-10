@@ -1,0 +1,8 @@
+setup:
+  objects:
+    - name: luke
+      directory: ./luke/test
+      states: 200
+    - name: isaac
+      directory: ./isaac/test
+      states: 190

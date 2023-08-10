@@ -1,0 +1,9 @@
+produce:
+  filename: test
+  mode: normal
+  width: 1920
+  height: 1080
+  framerate: 30
+  quality: 100
+  frames: 300
+  produce: pse

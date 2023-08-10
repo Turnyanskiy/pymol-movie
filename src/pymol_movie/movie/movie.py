@@ -1,7 +1,7 @@
 """Functions for movie setup and production."""
-from pymol import cmd
+from typing import Any, Dict, List, Tuple
 
-from typing import Any, Dict, List
+from pymol import cmd
 
 
 class MovieMaker:
@@ -12,13 +12,13 @@ class MovieMaker:
         _loaded_frames: Stores total number of loaded frames.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the instance."""
-        self._loaded_scenes = []
+        self._loaded_scenes: List[Tuple[str, int, str, int]] = []
         self._loaded_frames = 0
 
     @staticmethod
-    def _clean_produce_dict(produce_dict: Dict[str, Any]):
+    def _clean_produce_dict(produce_dict: Dict[str, Any]) -> None:
         """Clean a setup dictionary.
 
         Checks for valid dict values. If not valid sets a default.
@@ -26,12 +26,10 @@ class MovieMaker:
         Args:
             produce_dict: Nested dictionary containing setup information.
         """
-        if not (filename := produce_dict.get("filename")) or not isinstance(
-            filename, str
-        ):
+        if not (filename := produce_dict.get("filename")) or not isinstance(filename, str):
             print(
-                'setup: filename has either not been specified or is not a string. A default filename of \
-    "pymol_movie" will be used.'
+                'setup: filename has either not been specified or is not a string. A default \
+                filename of "pymol_movie" will be used.'
             )
             produce_dict["filename"] = "pymol_movie"
 
@@ -48,30 +46,29 @@ class MovieMaker:
 
         if not (width := produce_dict.get("width")) or not width > 0:
             print(
-                "setup; width has either not been specified or is not >0. A default width of 1264 will be used."
+                "setup; width has either not been specified or is not >0. A default width of 1264 \
+                will be used."
             )
             produce_dict["width"] = 1264
 
         if not (height := produce_dict.get("height")) or not height > 0:
             print(
-                "setup; height has either not been specified or is not >0. A default height of 720 will be used."
+                "setup; height has either not been specified or is not >0. A default height of 720 \
+                will be used."
             )
             produce_dict["height"] = 720
 
         if not produce_dict.get("framerate"):
             print(
-                "setup: frame rate has either not been specified or... A default frame rate of 30 will be used."
+                "setup: frame rate has either not been specified or... A default frame rate of 30 \
+                 will be used."
             )
             produce_dict["framerate"] = 30
 
-        if (
-            not (quality := produce_dict.get("quality"))
-            or not quality >= 0
-            or not quality <= 100
-        ):
+        if not (quality := produce_dict.get("quality")) or not quality >= 0 or not quality <= 100:
             print(
-                "setup: quality has either not been specified or is not within the bounds of 0-100. A default quality of \
-    50 will be used."
+                "setup: quality has either not been specified or is not within the bounds 0-100. \
+                A default quality of  50 will be used."
             )
             produce_dict["quality"] = 50
         if not produce_dict.get("produce"):
@@ -87,7 +84,7 @@ class MovieMaker:
 
         cmd.set("movie_loop", 0)
 
-        for (scene, frame, name, state) in self._loaded_scenes:
+        for scene, frame, name, state in self._loaded_scenes:
             cmd.mview("store", frame, scene=scene, object=name, state=state)
 
         if (produce := produce_dict.get("produce")) and produce == "mpg":
@@ -115,7 +112,6 @@ class MovieMaker:
 
         # Setup objects
         for object_dict in scene_dict["objects"]:
-
             if actions := object_dict.get("actions"):
                 self._setup_model(object_dict["name"], actions)
 
@@ -132,9 +128,7 @@ class MovieMaker:
         if camera_dict := scene_dict.get("camera"):
             self._setup_camera(camera_dict)
 
-        self._loaded_scenes.append(
-            (str(scene_dict["scene"]), scene_dict["frame"], "", 0)
-        )
+        self._loaded_scenes.append((str(scene_dict["scene"]), scene_dict["frame"], "", 0))
 
     def _setup_camera(self, camera_dicts: List[dict]) -> None:
         """Set camera actions for movie scene.
@@ -156,6 +150,9 @@ class MovieMaker:
             elif choice == "orient":
                 cmd.orient(details["selection"])
 
+            else:
+                print(f'The choice "{choice}" is not recognized.')
+
     def _setup_model(self, name: str, action_dicts: List[dict]) -> None:
         """Set model actions for movie scene.
 
@@ -171,9 +168,7 @@ class MovieMaker:
             if choice == "color":
                 cmd.color(details["color"], f'{name} and {details["selection"]}')
             elif choice == "representation":
-                cmd.show_as(
-                    details["representation"], f'{name} and {details["selection"]}'
-                )
+                cmd.show_as(details["representation"], f'{name} and {details["selection"]}')
             elif choice == "rotate":
                 cmd.rotate(
                     details["axis"],
@@ -189,3 +184,6 @@ class MovieMaker:
                 cmd.show("surface", f'{name} and {details["selection"]}')
                 cmd.show("sticks", f'{name} and {details["selection"]}')
                 cmd.set("transparency", 0.5, f'{name} and {details["selection"]}')
+
+            else:
+                print(f'The choice "{choice}" is not recognized.')
