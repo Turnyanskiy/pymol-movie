@@ -69,6 +69,8 @@ In PyMol scenes are used to store view, all object activity information, all ato
 color, representations and the global frame index. PyMol will then automatically interpolate between
 those scenes that results in the desired smooth transitions. https://pymolwiki.org/index.php/Scene
 
+**Note**: Since pymol interpolates between scenes a final "empty" scene is required. In this scene you are only required to define object state and frame (ie. the final frame of the movie).
+
 |           |                                                                                                                                      |
 | --------- | ------------------------------------------------------------------------------------------------------------------------------------ |
 | `scene`   | Scene name. (The example uses a number but this is not required. Scenes are loaded and linked in the order they appear in the .yaml) |
