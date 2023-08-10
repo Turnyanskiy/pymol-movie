@@ -1,10 +1,10 @@
 setup:
   objects:
     - name: luke
-      directory: ./example_trajectories/simple_translate
+      directory: ./tests/samples/object_trajs/example_object_1
       states: 200
     - name: isaac
-      directory: ./example_trajectories/translate_rotate
+      directory: ./tests/samples/object_trajs/example_object_2
       states: 190
 produce:
   filename: example
