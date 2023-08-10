@@ -90,7 +90,12 @@ def test_parse_args(filepath: str) -> None:
                                             "representation": "sticks",
                                         }
                                     },
-                                    {"color": {"selection": "chain C", "color": "pink"}},
+                                    {
+                                        "color": {
+                                            "selection": "chain C",
+                                            "color": "pink",
+                                        }
+                                    },
                                 ],
                             },
                             {
@@ -122,7 +127,12 @@ def test_parse_args(filepath: str) -> None:
                                             "representation": "cartoon",
                                         }
                                     },
-                                    {"color": {"selection": "chain C", "color": "green"}},
+                                    {
+                                        "color": {
+                                            "selection": "chain C",
+                                            "color": "green",
+                                        }
+                                    },
                                 ],
                             },
                             {
@@ -135,7 +145,12 @@ def test_parse_args(filepath: str) -> None:
                                             "representation": "sticks",
                                         }
                                     },
-                                    {"translate": {"selection": "chain A", "vector": [0, 10, 0]}},
+                                    {
+                                        "translate": {
+                                            "selection": "chain A",
+                                            "vector": [0, 10, 0],
+                                        }
+                                    },
                                 ],
                             },
                         ],
@@ -158,7 +173,13 @@ def test_parse_args(filepath: str) -> None:
                                             "representation": "sticks",
                                         }
                                     },
-                                    {"rotate": {"axis": "x", "angle": 90, "selection": "all"}},
+                                    {
+                                        "rotate": {
+                                            "axis": "x",
+                                            "angle": 90,
+                                            "selection": "all",
+                                        }
+                                    },
                                 ],
                             },
                             {
@@ -218,7 +239,9 @@ def test_parse_args(filepath: str) -> None:
                             {
                                 "name": "isaac",
                                 "state": 100,
-                                "actions": [{"surface_sticks": {"selection": "chain C"}}],
+                                "actions": [
+                                    {"surface_sticks": {"selection": "chain C"}}
+                                ],
                             }
                         ],
                         "camera": [{"zoom": {"selection": "chain C"}}],

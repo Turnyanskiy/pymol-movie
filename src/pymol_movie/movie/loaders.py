@@ -13,7 +13,9 @@ def load_trajectory(directory: str, name: str) -> None:
         name: Name of loaded object.
     """
     path = Path(directory)
-    files = sorted(path.glob("*.pdb"), key=lambda x: int(os.path.splitext(x)[0].split("_")[-1]))
+    files = sorted(
+        path.glob("*.pdb"), key=lambda x: int(os.path.splitext(x)[0].split("_")[-1])
+    )
     for file in files:
         cmd.load(file, name)
 

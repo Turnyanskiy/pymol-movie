@@ -16,9 +16,9 @@ def main() -> None:
 
     # Loads all objects
     for pymol_object in yaml_dict["setup"]["objects"]:
-        loaders.ObjectLoader(pymol_object["directory"], pymol_object["name"]).load_up_to_state(
-            pymol_object["states"]
-        )
+        loaders.ObjectLoader(
+            pymol_object["directory"], pymol_object["name"]
+        ).load_up_to_state(pymol_object["states"])
 
     # Creates scenes
     movie_maker = movie.MovieMaker()

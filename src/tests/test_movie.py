@@ -7,8 +7,12 @@ from pymol_movie.movie.movie import MovieMaker
 
 class TestMovieMaker:
     movie_maker = MovieMaker()
-    ObjectLoader("./tests/samples/object_trajs/example_object_1", "luke").load_up_to_state(200)
-    ObjectLoader("./tests/samples/object_trajs/example_object_2", "isaac").load_up_to_state(190)
+    ObjectLoader(
+        "./tests/samples/object_trajs/example_object_1", "luke"
+    ).load_up_to_state(200)
+    ObjectLoader(
+        "./tests/samples/object_trajs/example_object_2", "isaac"
+    ).load_up_to_state(190)
 
     @pytest.mark.parametrize(
         ("scene_dict", "expected_out"),
@@ -35,7 +39,12 @@ class TestMovieMaker:
                             "name": "isaac",
                             "state": 1,
                             "actions": [
-                                {"reentation": {"selection": "all", "representation": "sticks"}}
+                                {
+                                    "reentation": {
+                                        "selection": "all",
+                                        "representation": "sticks",
+                                    }
+                                }
                             ],
                         },
                     ],
@@ -106,7 +115,12 @@ class TestMovieMaker:
                                         "representation": "sticks",
                                     }
                                 },
-                                {"translate": {"selection": "chain A", "vector": [0, 10, 0]}},
+                                {
+                                    "translate": {
+                                        "selection": "chain A",
+                                        "vector": [0, 10, 0],
+                                    }
+                                },
                             ],
                         },
                     ],
